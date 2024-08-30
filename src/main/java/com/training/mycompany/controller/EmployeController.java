@@ -32,7 +32,7 @@ public class EmployeController {
     }
 
     @GetMapping("employe/{id}/detail")
-    public ResponseEntity<Employe> detailEmploye(@PathVariable Long id){
+    public ResponseEntity<Employe> detailEmploye(@PathVariable Long id) throws Exception {
 
         Employe employDetail = employeService.getOneEmploye(id);
 

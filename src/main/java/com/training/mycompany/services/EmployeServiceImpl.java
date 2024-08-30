@@ -1,6 +1,7 @@
 package com.training.mycompany.services;
 import com.training.mycompany.entity.Employe;
 import com.training.mycompany.enums.ETAT_EMPLOYE;
+import com.training.mycompany.myexceptions.*;
 import com.training.mycompany.repository.EmpoloyeRepo;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +10,7 @@ import java.util.Optional;
 
 @Service
 public class EmployeServiceImpl implements EmployeService{
+
 
     private final EmpoloyeRepo empoloyeRepo;
 
@@ -21,12 +23,15 @@ public class EmployeServiceImpl implements EmployeService{
     public Employe addEmploye(Employe employe) {
 
         employe.setEtat(ETAT_EMPLOYE.ACTIF.toString());
+        if (employe.getPrenom().length() < 2){
+            throw new IllegalArgumentException(" Le prenom doit contenir au moins 2 caractere !");
+        }
         return empoloyeRepo.save(employe);
+
     }
 
     @Override
-    public List<Employe> listEmploye() {
-
+    public List<Employe> listEmploye()  {
         return empoloyeRepo.findAll();
     }
 
@@ -36,8 +41,9 @@ public class EmployeServiceImpl implements EmployeService{
         Optional<Employe> employeSearched = empoloyeRepo.findById(id);
 
         if (employeSearched.isEmpty()){
-            return null;
+            throw new MyNotFoundException(" Aucun employé trouvé avec cet identifiant: "+ id +" Merci de chosir un autre !");
         }
+
 
         Employe employeFound = employeSearched.get();
 
@@ -50,8 +56,9 @@ public class EmployeServiceImpl implements EmployeService{
         Optional<Employe> employeSearched = empoloyeRepo.findById(id);
 
         if (employeSearched.isEmpty()){
-            return null;
+            throw new MyNotFoundException(" Aucun employé trouvé à mettre à jour avec cet identifiant: "+ id +" Merci de chosir un autre !");
         }
+
         Employe employeFound = employeSearched.get();
         employeFound.setNom(employe.getNom());
         employeFound.setPrenom(employe.getPrenom());
@@ -71,12 +78,14 @@ public class EmployeServiceImpl implements EmployeService{
         Optional<Employe> employeSearched = empoloyeRepo.findById(id);
 
         if (employeSearched.isEmpty()){
-            throw new IllegalArgumentException(" Aucun employe trouvé");
+            throw new MyNotFoundException(" Aucun employé trouvé à supprimer avec cet identifiant: "+ id +" Merci de chosir un autre !");
         }
 
         Employe employeFound = employeSearched.get();
         employeFound.setEtat(ETAT_EMPLOYE.SUPPRIME.toString());
         empoloyeRepo.save(employeFound);
+
+        throw new MySuccessException(" Operation de suppression reussie !");
 
     }
 }

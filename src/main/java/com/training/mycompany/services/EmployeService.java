@@ -10,7 +10,7 @@ public interface EmployeService {
 
     List<Employe> listEmploye();
 
-    Employe getOneEmploye(Long id);
+    Employe getOneEmploye (Long id);
 
     Employe updateEmploye(Long id, Employe employe);
 
